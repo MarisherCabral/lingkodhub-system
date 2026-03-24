@@ -1,0 +1,99 @@
+<section class="dashboard">
+  <!-- MOBILE TOPBAR -->
+  <div class="mobile-topbar">
+    <button class="menu-btn" type="button" (click)="toggleSidebar()">
+      <lucide-icon [img]="icons.Menu" class="topbar-icon"></lucide-icon>
+    </button>
+
+    <div class="mobile-brand">
+      <img src="logo.png" class="mobile-logo" alt="LingkodHub Logo" />
+      <div class="mobile-brand-text">
+        <h2>Lingkod<span>Hub</span></h2>
+        <p>Angeles City</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY -->
+  <div
+    class="sidebar-overlay"
+    *ngIf="isSidebarOpen"
+    (click)="closeSidebar()"
+  ></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" [class.mobile-open]="isSidebarOpen">
+    <div class="sidebar-top">
+      <div class="sidebar-mobile-head">
+        <div class="logo-section">
+          <div class="logo-wrap">
+            <img src="logo.png" class="logo-img" alt="LingkodHub Logo" />
+          </div>
+
+          <div class="logo-text">
+            <h2>Lingkod<span>Hub</span></h2>
+            <p>Angeles City</p>
+          </div>
+        </div>
+
+        <button class="close-btn" type="button" (click)="closeSidebar()">
+          <lucide-icon [img]="icons.X" class="close-icon"></lucide-icon>
+        </button>
+      </div>
+
+      <nav class="nav-menu">
+        <a
+          routerLink="/dashboard"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeSidebar()"
+        >
+          <lucide-icon [img]="icons.LayoutDashboard" class="nav-icon"></lucide-icon>
+          <span>Dashboard</span>
+        </a>
+
+        <a
+          routerLink="/my-requests"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeSidebar()"
+        >
+          <lucide-icon [img]="icons.FileText" class="nav-icon"></lucide-icon>
+          <span>My Requests</span>
+        </a>
+
+        <a
+          routerLink="/appointments"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeSidebar()"
+        >
+          <lucide-icon [img]="icons.CalendarDays" class="nav-icon"></lucide-icon>
+          <span>Appointments</span>
+        </a>
+
+        <a
+          routerLink="/profile"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeSidebar()"
+        >
+          <lucide-icon [img]="icons.CircleUserRound" class="nav-icon"></lucide-icon>
+          <span>Profile</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+      <button class="logout" type="button" (click)="logout()">
+        <lucide-icon [img]="icons.LogOut" class="logout-icon"></lucide-icon>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- PAGE CONTENT -->
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+</section>

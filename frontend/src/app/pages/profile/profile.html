@@ -1,0 +1,81 @@
+<div class="profile-page" *ngIf="!loading; else loadingState">
+  <div class="profile-hero">
+    <div class="profile-hero-left">
+      <p class="eyebrow">Account Settings</p>
+      <h2>My Profile</h2>
+      <p class="subtitle">Manage your personal information and account details.</p>
+    </div>
+
+    <div class="profile-avatar">
+      {{ getInitials() }}
+    </div>
+  </div>
+
+  <div class="profile-grid">
+    <div class="profile-card summary-card">
+      <h3>Account Overview</h3>
+
+      <div class="summary-item">
+        <span class="label">Full Name</span>
+        <p>{{ user?.fullName }}</p>
+      </div>
+
+      <div class="summary-item">
+        <span class="label">Email</span>
+        <p>{{ user?.email }}</p>
+      </div>
+
+      <div class="summary-item">
+        <span class="label">Role</span>
+        <p>{{ user?.role | titlecase }}</p>
+      </div>
+    </div>
+
+    <div class="profile-card edit-card">
+      <h3>Edit Profile</h3>
+
+      <form #profileForm="ngForm" (ngSubmit)="saveProfile(profileForm)" novalidate>
+        <label for="fullName">Full Name</label>
+        <input
+          id="fullName"
+          type="text"
+          [(ngModel)]="formData.fullName"
+          name="fullName"
+          #fullNameRef="ngModel"
+          placeholder="Enter your full name"
+          required
+        />
+        <small class="error-text" *ngIf="fullNameRef.invalid && fullNameRef.touched">
+          Full name is required.
+        </small>
+
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="formData.email"
+          name="email"
+          #emailRef="ngModel"
+          placeholder="Enter your email"
+          required
+        />
+        <small class="error-text" *ngIf="emailRef.invalid && emailRef.touched">
+          Email is required.
+        </small>
+
+        <div class="actions">
+          <button type="submit" class="primary" [disabled]="profileForm.invalid || saving">
+            {{ saving ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingState>
+  <div class="loading-wrap">
+    <div class="spinner"></div>
+    <p>Loading profile...</p>
+  </div>
+</ng-template>

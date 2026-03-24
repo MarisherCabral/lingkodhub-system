@@ -1,0 +1,29 @@
+<section class="request">
+  <div class="request-container">
+
+    <h2>Request Document</h2>
+    <p>Submit your barangay request</p>
+
+    <form (ngSubmit)="submitRequest()">
+
+      <div class="input-group">
+        <label>Document Type</label>
+        <select [(ngModel)]="request.type" name="type" required>
+          <option value="">Select</option>
+          <option>Barangay Clearance</option>
+          <option>Certificate of Residency</option>
+          <option>Business Permit</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Purpose</label>
+        <input type="text" [(ngModel)]="request.purpose" name="purpose" required />
+      </div>
+
+      <button type="submit">Submit Request</button>
+
+    </form>
+
+  </div>
+</section>

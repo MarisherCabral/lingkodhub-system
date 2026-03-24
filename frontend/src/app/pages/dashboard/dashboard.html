@@ -1,0 +1,115 @@
+<div class="dashboard">
+  <div *ngIf="errorMessage" class="error-banner">
+    {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="!errorMessage">
+    <div class="hero">
+      <div class="hero-left">
+        <p class="eyebrow">Citizen Services Portal</p>
+        <h2>Welcome back, {{ getDisplayName() }}</h2>
+        <p class="subtitle">Here’s your dashboard overview and latest request activity.</p>
+
+        <div class="hero-pills">
+          <span class="hero-pill">{{ pending }} Active</span>
+          <span class="hero-pill soft">{{ recentRequests.length }} Recent Updates</span>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="avatar">
+          {{ getUserInitial() }}
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card stat-pending">
+        <div class="stat-top">
+          <span class="stat-badge pending">Active</span>
+        </div>
+        <div class="stat-number">{{ pending }}</div>
+        <div class="stat-label">Pending Requests</div>
+        <div class="stat-desc">Requests currently waiting for review.</div>
+      </div>
+
+      <div class="stat-card stat-approved">
+        <div class="stat-top">
+          <span class="stat-badge approved">Completed</span>
+        </div>
+        <div class="stat-number">{{ approved }}</div>
+        <div class="stat-label">Approved Documents</div>
+        <div class="stat-desc">Successfully approved document requests.</div>
+      </div>
+
+      <div class="stat-card stat-upcoming">
+        <div class="stat-top">
+          <span class="stat-badge upcoming">Upcoming</span>
+        </div>
+        <div class="stat-number">{{ upcoming }}</div>
+        <div class="stat-label">Upcoming Request Dates</div>
+        <div class="stat-desc">Requests scheduled for today and onward.</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="panel actions-panel">
+        <div class="panel-header">
+          <h3>Quick Actions</h3>
+          <p>Access the most common portal actions.</p>
+        </div>
+
+        <div class="action-list">
+          <button class="action-btn primary-action" routerLink="/my-requests">
+            <span class="action-title">New Document Request</span>
+            <span class="action-sub">Submit a new request instantly</span>
+          </button>
+
+          <button class="action-btn" routerLink="/appointments">
+            <span class="action-title">Schedule Appointment</span>
+            <span class="action-sub">Reserve a visit or follow-up slot</span>
+          </button>
+
+          <button class="action-btn" routerLink="/profile">
+            <span class="action-title">Update Profile</span>
+            <span class="action-sub">Manage your account details</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel activity-panel">
+        <div class="panel-header">
+          <h3>Recent Activity</h3>
+          <p>Your latest request updates appear here.</p>
+        </div>
+
+        <div *ngIf="loading" class="activity-empty">
+          Loading activity...
+        </div>
+
+        <div *ngIf="!loading && recentRequests.length === 0" class="activity-empty">
+          No recent activity yet.
+        </div>
+
+        <div *ngIf="!loading && recentRequests.length > 0" class="activity-list">
+          <div
+            class="activity-item"
+            *ngFor="let req of recentRequests"
+            [ngClass]="getStatusClass(req.status)"
+          >
+            <div class="activity-main">
+              <div class="activity-title">{{ getRequestTitle(req) }}</div>
+              <div class="activity-meta">
+                {{ getRequestDate(req) | date:'MMM d, y' }}
+              </div>
+            </div>
+
+            <div class="activity-status">
+              {{ (req.status || 'pending') | titlecase }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

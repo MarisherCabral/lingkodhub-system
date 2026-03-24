@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f9fafb;
+}
+
+* {
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}

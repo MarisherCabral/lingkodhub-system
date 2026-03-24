@@ -1,0 +1,165 @@
+<div class="admin-page">
+  <div class="admin-hero">
+    <div>
+      <p class="eyebrow">Admin Panel</p>
+      <h2>Admin Dashboard</h2>
+      <p class="subtitle">Manage resident document requests and monitor request activity.</p>
+    </div>
+
+    <div class="admin-avatar">
+      {{ getInitials(admin?.fullName) }}
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-top">
+        <div class="stat-label">Total Requests</div>
+        <div class="stat-chip neutral">All</div>
+      </div>
+      <div class="stat-number">{{ summary.total }}</div>
+      <div class="stat-foot">All submitted document requests</div>
+    </div>
+
+    <div class="stat-card pending">
+      <div class="stat-top">
+        <div class="stat-label">Pending Review</div>
+        <div class="stat-chip pending-chip">Needs Action</div>
+      </div>
+      <div class="stat-number">{{ summary.pending }}</div>
+      <div class="stat-foot">Requests waiting for approval</div>
+    </div>
+
+    <div class="stat-card approved">
+      <div class="stat-top">
+        <div class="stat-label">Approved</div>
+        <div class="stat-chip approved-chip">Processed</div>
+      </div>
+      <div class="stat-number">{{ summary.approved }}</div>
+      <div class="stat-foot">Requests already approved</div>
+    </div>
+
+    <div class="stat-card rejected">
+      <div class="stat-top">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-chip rejected-chip">Closed</div>
+      </div>
+      <div class="stat-number">{{ summary.rejected }}</div>
+      <div class="stat-foot">Requests that were declined</div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head">
+      <div>
+        <h3>Request Management</h3>
+        <p>Review and process resident requests.</p>
+      </div>
+
+      <div class="table-tools" *ngIf="!loading">
+        <div class="search-box">
+          <lucide-icon [img]="icons.Search" class="input-icon"></lucide-icon>
+          <input
+            type="text"
+            placeholder="Search requests..."
+            [(ngModel)]="searchText"
+          />
+        </div>
+
+        <div class="filter-box">
+          <lucide-icon [img]="icons.Filter" class="input-icon"></lucide-icon>
+          <select [(ngModel)]="filterStatus">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading-wrap">
+      <div class="spinner"></div>
+      <p>Loading admin data...</p>
+    </div>
+
+    <div class="table-wrap" *ngIf="!loading">
+      <div class="table-summary" *ngIf="filteredRequests.length > 0">
+        Showing <strong>{{ filteredRequests.length }}</strong> request<span *ngIf="filteredRequests.length !== 1">s</span>
+      </div>
+
+      <table *ngIf="filteredRequests.length > 0; else emptyState">
+        <thead>
+          <tr>
+            <th>Resident</th>
+            <th>Email</th>
+            <th>Document Type</th>
+            <th>Purpose</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let req of filteredRequests">
+            <td>
+              <div class="resident-cell">
+                <div class="resident-avatar">
+                  {{ getInitials(req.userId?.fullName) }}
+                </div>
+                <div class="resident-meta">
+                  <span class="resident-name">{{ req.userId?.fullName }}</span>
+                  <small class="resident-role">{{ req.userId?.role | titlecase }}</small>
+                </div>
+              </div>
+            </td>
+
+            <td>{{ req.userId?.email }}</td>
+            <td>{{ req.type }}</td>
+            <td>{{ req.purpose }}</td>
+            <td>{{ req.date | date:'MMM d, y' }}</td>
+
+            <td>
+              <span class="status" [ngClass]="getStatusClass(req.status)">
+                {{ req.status | titlecase }}
+              </span>
+            </td>
+
+            <td class="actions-col">
+              <div class="action-buttons" *ngIf="req.status === 'pending'; else doneState">
+                <button
+                  class="approve-btn"
+                  [disabled]="updating"
+                  (click)="updateStatus(req._id, 'approved')"
+                >
+                  Approve
+                </button>
+
+                <button
+                  class="reject-btn"
+                  [disabled]="updating"
+                  (click)="updateStatus(req._id, 'rejected')"
+                >
+                  Reject
+                </button>
+              </div>
+
+              <ng-template #doneState>
+                <span class="done-label">Updated</span>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyState>
+        <div class="empty-row">
+          <lucide-icon [img]="icons.FileText" class="empty-icon"></lucide-icon>
+          <h4>No requests found</h4>
+          <p>Try adjusting your search or filter.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

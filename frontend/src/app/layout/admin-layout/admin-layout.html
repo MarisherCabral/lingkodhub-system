@@ -1,0 +1,86 @@
+<section class="admin-shell">
+  <div class="mobile-topbar">
+    <button class="menu-btn" type="button" (click)="toggleSidebar()">
+      <lucide-icon [img]="icons.Menu" class="topbar-icon"></lucide-icon>
+    </button>
+
+    <div class="mobile-brand">
+      <img src="logo.png" class="mobile-logo" alt="LingkodHub Logo" />
+      <div class="mobile-brand-text">
+        <h2>Lingkod<span>Hub</span></h2>
+        <p>Admin Portal</p>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="sidebar-overlay"
+    *ngIf="isSidebarOpen"
+    (click)="closeSidebar()"
+  ></div>
+
+  <aside class="admin-sidebar" [class.mobile-open]="isSidebarOpen">
+    <div class="sidebar-top">
+      <div class="sidebar-mobile-head">
+        <div class="brand-section">
+          <div class="brand-logo-wrap">
+            <img src="logo.png" class="brand-logo" alt="LingkodHub Logo" />
+          </div>
+
+          <div class="brand-text">
+            <h2>Lingkod<span>Hub</span></h2>
+            <p>Admin Portal</p>
+          </div>
+        </div>
+
+        <button class="close-btn" type="button" (click)="closeSidebar()">
+          <lucide-icon [img]="icons.X" class="close-icon"></lucide-icon>
+        </button>
+      </div>
+
+      <nav class="nav-menu">
+        <a
+          routerLink="/admin"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-item"
+          (click)="closeSidebar()"
+        >
+          <lucide-icon [img]="icons.LayoutDashboard" class="nav-icon"></lucide-icon>
+          <span>Dashboard</span>
+        </a>
+
+        <a
+          routerLink="/admin/requests"
+          routerLinkActive="active"
+          class="nav-item"
+          (click)="closeSidebar()"
+        >
+          <lucide-icon [img]="icons.FileText" class="nav-icon"></lucide-icon>
+          <span>Requests</span>
+        </a>
+
+        <a
+  routerLink="/admin/appointments"
+  routerLinkActive="active"
+  class="nav-item"
+  (click)="closeSidebar()"
+>
+  <lucide-icon [img]="icons.CalendarDays" class="nav-icon"></lucide-icon>
+  <span>Appointments</span>
+</a>
+      </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+      <button class="logout" type="button" (click)="logout()">
+        <lucide-icon [img]="icons.LogOut" class="logout-icon"></lucide-icon>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <router-outlet></router-outlet>
+  </main>
+</section>

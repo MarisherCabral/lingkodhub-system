@@ -1,0 +1,219 @@
+<div class="appointments-page">
+  <section class="hero-card">
+    <div class="hero-copy">
+      <p class="eyebrow">Resident Portal</p>
+      <h1>Appointments</h1>
+      <p class="subtitle">
+        Schedule barangay services with a smoother booking flow and keep track of every request in one place.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-number">{{ appointments.length }}</span>
+          <span class="stat-text">Total Bookings</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-number">{{ appointments.filter(a => a.status === 'pending').length }}</span>
+          <span class="stat-text">Pending</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-number">{{ appointments.filter(a => a.status === 'approved').length }}</span>
+          <span class="stat-text">Approved</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-action">
+      <button class="book-btn" (click)="openModal()">Book Appointment</button>
+    </div>
+  </section>
+
+  <div *ngIf="message" class="alert success">{{ message }}</div>
+  <div *ngIf="error" class="alert error">{{ error }}</div>
+
+  <section class="list-card">
+    <div class="section-head">
+      <div>
+        <p class="section-kicker">History</p>
+        <h2>My Appointments</h2>
+        <p class="section-subtitle">Review your submitted schedules and their current status.</p>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="empty-state">
+      <div class="empty-icon">⌛</div>
+      <h3>Loading appointments...</h3>
+      <p>Please wait while we fetch your records.</p>
+    </div>
+
+    <div *ngIf="!loading && appointments.length === 0" class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No appointments yet</h3>
+      <p>Your booked appointments will appear here.</p>
+    </div>
+
+    <div class="appointment-grid" *ngIf="!loading && appointments.length > 0">
+      <article
+        class="appointment-card fade-in-card"
+        *ngFor="let appointment of appointments; trackBy: trackByAppointment"
+      >
+        <div class="appointment-header">
+          <div class="appointment-title-wrap">
+            <p class="label-overline">Service</p>
+            <h3>{{ appointment.service }}</h3>
+          </div>
+
+          <span class="status-badge" [ngClass]="getStatusClass(appointment.status)">
+            {{ appointment.status }}
+          </span>
+        </div>
+
+        <div class="appointment-info-grid">
+          <div class="info-box">
+            <span class="info-label">Date</span>
+            <span class="info-value">{{ appointment.date | date:'MMMM d, y' }}</span>
+          </div>
+
+          <div class="info-box">
+            <span class="info-label">Time</span>
+            <span class="info-value">{{ formatTime(appointment.time) }}</span>
+          </div>
+        </div>
+
+        <div class="notes-box">
+          <span class="info-label">Notes</span>
+          <p>{{ appointment.notes || 'No additional notes provided.' }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="showModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <p class="section-kicker">New Booking</p>
+          <h2>Book Appointment</h2>
+          <p class="section-subtitle">Choose an available date and time slot.</p>
+        </div>
+
+        <button type="button" class="close-btn" (click)="closeModal()">×</button>
+      </div>
+
+      <form #appointmentForm="ngForm" (ngSubmit)="submitAppointment(appointmentForm)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="service">Service</label>
+            <select
+              id="service"
+              name="service"
+              [(ngModel)]="newAppointment.service"
+              (change)="onServiceChange()"
+              required
+            >
+              <option value="">Select service</option>
+              <option *ngFor="let service of services" [value]="service">
+                {{ service }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calendar-shell" *ngIf="newAppointment.service">
+          <div class="calendar-head">
+            <div>
+              <p class="section-kicker">Select Date</p>
+              <h3>{{ currentMonthLabel }}</h3>
+            </div>
+
+            <div class="calendar-actions">
+              <button type="button" class="month-btn" (click)="previousMonth()">‹</button>
+              <button type="button" class="month-btn" (click)="nextMonth()">›</button>
+            </div>
+          </div>
+
+          <div class="weekdays">
+            <div class="weekday" *ngFor="let day of weekDays">{{ day }}</div>
+          </div>
+
+          <div class="calendar-grid">
+            <div
+              class="calendar-day"
+              *ngFor="let day of calendarDays"
+              [class.empty]="day.empty"
+              [class.available]="day.available"
+              [class.selected]="day.selected"
+              [class.today]="day.today"
+              (click)="!day.empty && day.available && onDateSelected(day.dateString)"
+            >
+              <ng-container *ngIf="!day.empty">
+                <span>{{ day.day }}</span>
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="calendar-note" *ngIf="loadingDates">Loading available dates...</div>
+          <div class="calendar-note" *ngIf="!loadingDates && availableDates.length === 0">
+            No available dates for this service.
+          </div>
+        </div>
+
+        <div class="selected-banner" *ngIf="newAppointment.date">
+          <span>Selected Date</span>
+          <strong>{{ formatDate(newAppointment.date) }}</strong>
+        </div>
+
+        <div class="slots-shell" *ngIf="newAppointment.date">
+          <div class="slots-head">
+            <div>
+              <p class="section-kicker">Available Slots</p>
+              <h3>Select a time</h3>
+            </div>
+          </div>
+
+          <div class="calendar-note" *ngIf="checkingAvailability">Loading slots...</div>
+
+          <div class="slot-list" *ngIf="!checkingAvailability && availableSlots.length > 0">
+            <button
+              type="button"
+              class="slot-btn"
+              *ngFor="let slot of availableSlots"
+              [class.active]="newAppointment.time === slot"
+              (click)="selectTime(slot)"
+            >
+              {{ formatTime(slot) }}
+            </button>
+          </div>
+
+          <div class="calendar-note" *ngIf="!checkingAvailability && availableSlots.length === 0">
+            No available slots for this date.
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="notes">Notes</label>
+            <textarea
+              id="notes"
+              name="notes"
+              rows="4"
+              [(ngModel)]="newAppointment.notes"
+              placeholder="Add any extra details for your appointment"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" (click)="closeModal(appointmentForm)">
+            Cancel
+          </button>
+          <button type="submit" class="primary-btn" [disabled]="submitting">
+            {{ submitting ? 'Submitting...' : 'Submit Appointment' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

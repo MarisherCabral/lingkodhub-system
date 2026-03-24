@@ -1,0 +1,76 @@
+<section class="register">
+  <div class="register-bg"></div>
+
+  <div class="register-shell">
+   <a routerLink="/" class="back-home">
+  <lucide-icon [img]="icons.ArrowLeft" class="back-icon"></lucide-icon>
+  <span>Back to Home</span>
+</a>
+
+    <div class="brand">
+      <div class="brand-logo-wrap">
+        <img src="logo.png" alt="LingkodHub Logo" class="brand-logo" />
+      </div>
+
+      <div class="brand-text">
+        <h1>Lingkod<span>Hub</span></h1>
+        <p>Angeles City</p>
+      </div>
+    </div>
+
+    <div class="register-container">
+      <div class="register-head">
+        <span class="badge">Create Your Account</span>
+        <h2>Join LingkodHub</h2>
+        <p>Register to access digital barangay services quickly, securely, and conveniently.</p>
+      </div>
+
+      <form (ngSubmit)="register()" #registerForm="ngForm">
+        <div class="input-group">
+          <label for="fullName">Full Name</label>
+          <input
+            id="fullName"
+            type="text"
+            placeholder="Enter your full name"
+            [(ngModel)]="user.fullName"
+            name="fullName"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            [(ngModel)]="user.email"
+            name="email"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            [(ngModel)]="user.password"
+            name="password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="register-btn">
+          Create Account
+        </button>
+      </form>
+
+      <p class="login-link">
+        Already have an account?
+        <a routerLink="/login">Login</a>
+      </p>
+    </div>
+  </div>
+</section>
